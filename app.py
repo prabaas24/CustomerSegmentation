@@ -39,24 +39,35 @@ recency = st.number_input("Recency", 0, 100, 50)
 
 
 if st.button("Predict Cluster"):
-   input_dict = {col: 0 for col in model_features}
-   input_dict["Income"] = income
-   input_dict["Age"] = age
-   input_dict["Total_Spending"] = spending
-   input_dict["Children_Count"] = children
-   input_dict["Recency"] = recency
-   input_df = pd.DataFrame([input_dict])
-   scaled_input = scaler.transform(input_df)
-   cluster = model.predict(scaled_input)
-   st.write("Predicted Cluster:", cluster)
 
+    input_dict = {col: 0 for col in model_features}
+
+    input_dict["Income"] = income
+    input_dict["Age"] = age
+    input_dict["Recency"] = recency
+
+    if "Total_Spending" in model_features:
+        input_dict["Total_Spending"] = spending
+
+    if "Children_Count" in model_features:
+        input_dict["Children_Count"] = children
+
+    input_df = pd.DataFrame([input_dict])
 
     scaled_input = scaler.transform(input_df)
+
     prediction = model.predict(scaled_input)
-    segment_name, segment_desc = segment_map[prediction[0]]
+    cluster_id = prediction[0]
+
+    st.write("Predicted Cluster:", cluster_id)
+
+    segment_name, segment_desc = segment_map[cluster_id]
     st.success(f"Segment: {segment_name}")
     st.write(segment_desc)
- 
+
+
+
+
    
 
 
