@@ -3,6 +3,11 @@ import pandas as pd
 import pickle
 import numpy as np
 
+model = pickle.load(open("kmeans_model.pkl", "rb"))
+scaler = pickle.load(open("scaler.pkl", "rb"))
+with open("model_features.pkl", "rb") as f:
+    model_features = pickle.load(f)
+
 segment_map = {
     0: ("Moderate Value Family Customers",
         "Budget conscious, family spending driven"),
@@ -17,10 +22,6 @@ segment_map = {
         "Low engagement, price sensitive")
 }
 
-
-model = pickle.load(open("kmeans_model.pkl", "rb"))
-scaler = pickle.load(open("scaler.pkl", "rb"))
-features = pickle.load(open("model_features.pkl","rb"))
 
 
 st.title("Customer Segmentation Prediction App")
@@ -38,13 +39,16 @@ recency = st.number_input("Recency", 0, 100, 50)
 
 
 if st.button("Predict Cluster"):
-    input_df = pd.DataFrame(columns=features)
-    input_df.loc[0] = 0
-    input_df['Income'] = income
-    input_df['Age'] = age
-    input_df['Total_Spending'] = spending
-    input_df['Children_Count'] = children
-    input_df['Recency'] = recency
+   input_dict = {col: 0 for col in model_features}
+   input_dict["Income"] = income
+   input_dict["Age"] = age
+   input_dict["Total_Spending"] = spending
+   input_dict["Children_Count"] = children
+   input_dict["Recency"] = recency
+   input_df = pd.DataFrame([input_dict])
+   scaled_input = scaler.transform(input_df)
+   cluster = model.predict(scaled_input)
+   st.write("Predicted Cluster:", cluster)
 
 
     scaled_input = scaler.transform(input_df)
