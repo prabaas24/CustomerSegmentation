@@ -51,3 +51,7 @@ if st.button("Predict Cluster"):
 
     st.success(f"Segment: {segment_name}")
     st.write(segment_desc)
+
+st.write("Model clusters:", model.n_clusters)
+st.write("Features expected:", features)
+
